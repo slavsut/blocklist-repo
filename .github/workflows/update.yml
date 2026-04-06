@@ -19,8 +19,11 @@ jobs:
       - name: Update system
         run: sudo apt-get update
 
-      - name: Run script
-        run: bash update.sh
+      - name: Run script (debug)
+        run: |
+         bash update.sh
+         echo "==== FILE CONTENT ===="
+         head -n 20 blocklist.netset
 
       - name: Commit changes
         run: |

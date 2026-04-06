@@ -5,6 +5,9 @@ on:
     - cron: '0 3 * * 1'
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -13,10 +16,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Install curl
-        run: sudo apt-get update && sudo apt-get install -y curl
+      - name: Update system
+        run: sudo apt-get update
 
-      - name: Update blocklist
+      - name: Run script
         run: bash update.sh
 
       - name: Commit changes

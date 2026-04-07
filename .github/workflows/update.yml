@@ -16,20 +16,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout main
         uses: actions/checkout@v5
-        with:
-          persist-credentials: false
 
       - name: Run update script
         run: bash update.sh
 
-      - name: Commit & Force Push
+      - name: Push to blocklist branch
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
-          git add blocklist.netset
-          git commit -m "auto update blocklist" || echo "no changes"
+          # создаём чистую ветку blocklist
+          git checkout --orphan blocklist
 
-          git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git HEAD:main
+          # удаляем всё кроме файла
+          git rm -rf .
+
+          # возвращаем файл
+          mv blocklist.netset .
+
+          git add blocklist.netset
+          git commit -m "update blocklist"
+
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git blocklist --force

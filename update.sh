@@ -6,8 +6,6 @@ OUT="blocklist.netset"
 echo "[+] Downloading..."
 
 curl -A "Mozilla/5.0" -sf $URL \
-| grep -v '^#' \
-| sed '/^$/d' \
 > $OUT
 
 echo "[+] Done:"

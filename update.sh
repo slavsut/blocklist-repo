@@ -10,5 +10,5 @@ curl -A "Mozilla/5.0" -sf $URL \
 | sed '/^$/d' \
 > $OUT
 
-echo "[+] Lines:"
+echo "[+] Done:"
 wc -l $OUT

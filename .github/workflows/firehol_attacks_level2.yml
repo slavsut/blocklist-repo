@@ -1,8 +1,8 @@
-name: Update blocklist.firehol_attacks_level2.netset
+name: Update Blocklists
 
 on:
   schedule:
-    - cron: '0 0 * * 0/3'
+    - cron: '0 3 * * 1'   # раз в неделю (понедельник 03:00)
   workflow_dispatch:
 
 permissions:
@@ -13,51 +13,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Клонируем репозиторий БЕЗ сохранения токена
+      # 1️⃣ Клонируем репозиторий
       - name: Checkout repo
         uses: actions/checkout@v5
         with:
           persist-credentials: false
 
-      # Убираем origin чтобы исключить push в main
-      - name: Remove origin
-        run: git remote remove origin
+      # 2️⃣ Подготовка ветки
+      - name: Prepare blocklist branch
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
 
-      # Устанавливаем curl
+          # подключаем origin с токеном
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
+
+          # получаем ветку (если есть)
+          git fetch origin blocklist || true
+
+          # создаём или синхронизируем ветку
+          git checkout -B blocklist origin/blocklist || git checkout -b blocklist
+
+          # очищаем мусор
+          git clean -fd
+
+      # 3️⃣ Установка зависимостей (если нужно)
       - name: Install curl
         run: sudo apt-get update && sudo apt-get install -y curl
 
-      # Запускаем скрипт обновления
+      # 4️⃣ Генерация списков
       - name: Run update script
-        run: bash firehol_attacks_level2.sh
+        run: bash update.sh
 
-      # Проверяем что файл не пустой
-      - name: Verify file
+      # 5️⃣ Проверка (не пустой файл)
+      - name: Verify files
         run: |
           if [ ! -s blocklist.firehol_attacks_level2.netset ]; then
-            echo "ERROR: blocklist is empty"
+            echo "ERROR: file is empty"
             exit 1
           fi
 
-      # Пушим только в ветку blocklist
-      - name: Push to blocklist branch
+      # 6️⃣ Коммит и push
+      - name: Push changes
         run: |
-           git config user.name "github-actions"
-           git config user.email "actions@github.com"
+          git add *.netset
+          git commit -m "auto update blocklists" || echo "no changes"
 
-           # добавляем origin
-           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
-
-           # получаем ветку
-           git fetch origin blocklist || true
-
-           # жёстко переключаемся (решает untracked проблему)
-           git checkout -B blocklist origin/blocklist || git checkout -b blocklist
-
-           # очищаем всё лишнее 💀
-           git clean -fd
-
-           # кладём файл
-           cp blocklist.firehol_attacks_level2.netset .
-
-           git add blocklist.firehol_attacks_level2.netset
+          # force нужен для CI (чтобы не было fetch/merge проблем)
+          git push --force origin blocklist

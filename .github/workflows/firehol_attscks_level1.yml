@@ -34,7 +34,7 @@ jobs:
       # Проверяем что файл не пустой
       - name: Verify file
         run: |
-          if [ ! -s blocklist.firehol_level1.netset ]; then
+          if [ ! -s blocklist.firehol_attacks_level1.netset ]; then
             echo "ERROR: blocklist is empty"
             exit 1
           fi
@@ -47,7 +47,7 @@ jobs:
 
           rm -rf out
           mkdir out
-          cp blocklist.firehol_level1.netset out/
+          cp blocklist.firehol_attacks_level1.netset out/
 
           cd out
           git init -b blocklist
@@ -55,7 +55,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
-          git add blocklist.firehol_level1.netset
+          git add blocklist.firehol_attacks_level1.netset
           git commit -m "update blocklist"
 
           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git

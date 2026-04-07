@@ -1,7 +1,7 @@
 #!/bin/bash
 
 URL="https://iplists.firehol.org/files/firehol_level1.netset"
-OUT="blocklist.firehol_level1.netset"
+OUT="blocklist.firehol_attacks_level1.netset"
 
 echo "[+] Downloading..."
 

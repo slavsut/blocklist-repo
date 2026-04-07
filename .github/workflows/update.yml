@@ -42,4 +42,7 @@ jobs:
           git commit -m "update blocklist"
 
           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
+
+          unset GITHUB_TOKEN
+          
           git push --force origin blocklist

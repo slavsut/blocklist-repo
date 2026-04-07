@@ -1,4 +1,4 @@
-name: Update blocklist.firehol_level1.netset
+name: Update blocklist.firehol_attacks_level1.netset
 
 on:
   schedule:

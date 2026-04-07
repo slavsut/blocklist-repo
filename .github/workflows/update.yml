@@ -16,6 +16,9 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v5
 
+      - name: DEBUG FILE
+        run: cat .github/workflows/update.yml
+
       # 💀 убиваем связь с main
       - name: Disable default git
         run: git remote remove origin

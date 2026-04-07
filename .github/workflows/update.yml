@@ -19,17 +19,24 @@ jobs:
       - name: Run update script
         run: bash update.sh
 
+      - name: Verify file
+        run: |
+          if [ ! -s blocklist.netset ]; then
+            echo "ERROR: blocklist is empty"
+            exit 1
+          fi
+
       - name: Push to blocklist branch
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
+          rm -rf out
           mkdir out
           cp blocklist.netset out/
 
           cd out
-          git init
-          git checkout -b blocklist
+          git init -b blocklist
 
           git add blocklist.netset
           git commit -m "update blocklist"

@@ -13,25 +13,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ✅ Клонируем репо БЕЗ токена (важно)
       - name: Checkout main
         uses: actions/checkout@v5
         with:
-           persist-credentials: false
-     
+          persist-credentials: false
+
+      # 💀 Убираем origin чтобы исключить push в main
       - name: Remove origin
         run: git remote remove origin
-      
 
-      - name: DEBUG FILE
-        run: cat .github/workflows/update.yml
-
-      # 💀 убиваем связь с main
-      - name: Disable default git
-        run: git remote remove origin
-
+      # 🚀 Генерация блоклиста
       - name: Run update script
         run: bash update.sh
 
+      # 🔍 Проверка (чтобы не залить пустой файл)
       - name: Verify file
         run: |
           if [ ! -s blocklist.netset ]; then
@@ -39,6 +35,7 @@ jobs:
             exit 1
           fi
 
+      # 📤 Пуш ТОЛЬКО в ветку blocklist
       - name: Push to blocklist branch
         run: |
           git config user.name "github-actions"

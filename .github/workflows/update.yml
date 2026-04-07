@@ -15,6 +15,12 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v5
+        with:
+           persist-credentials: false
+     
+      - name: Remove origin
+        run: git remote remove origin
+      
 
       - name: DEBUG FILE
         run: cat .github/workflows/update.yml

@@ -8,9 +8,6 @@ on:
 permissions:
   contents: write
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -27,16 +24,15 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
-          # создаём чистую ветку blocklist
-          git checkout --orphan blocklist
+          mkdir out
+          cp blocklist.netset out/
 
-          # удаляем всё кроме файла
-          git rm -rf .
-
-          # возвращаем файл
-          mv blocklist.netset .
+          cd out
+          git init
+          git checkout -b blocklist
 
           git add blocklist.netset
           git commit -m "update blocklist"
 
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git blocklist --force
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
+          git push --force origin blocklist

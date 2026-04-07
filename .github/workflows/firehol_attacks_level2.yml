@@ -59,4 +59,4 @@ jobs:
           git commit -m "update blocklist"
 
           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
-          git push --force origin blocklist
+          git push --force origin blocklist/blocklist.firehol_attacks_level2.netset

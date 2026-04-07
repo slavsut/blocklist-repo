@@ -43,7 +43,7 @@ jobs:
 
       # 4️⃣ Генерация списков
       - name: Run update script
-        run: bash update.sh
+        run: bash firehol_attacks_level2.sh
 
       # 5️⃣ Проверка (не пустой файл)
       - name: Verify files

@@ -16,6 +16,10 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v5
 
+      # 💀 убиваем связь с main
+      - name: Disable default git
+        run: git remote remove origin
+
       - name: Run update script
         run: bash update.sh
 
@@ -42,7 +46,4 @@ jobs:
           git commit -m "update blocklist"
 
           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
-
-          unset GITHUB_TOKEN
-          
           git push --force origin blocklist

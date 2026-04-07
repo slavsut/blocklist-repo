@@ -45,13 +45,13 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
-          git fetch origin blocklist || true
-          git checkout -B blocklist origin/blocklist || git checkout -b blocklist
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
 
-          cp blocklist.firehol_attacks_level2.netset .
+          git fetch origin || true
+          git checkout  blocklist || git checkout -b blocklist
 
-          git add .
+          git add blocklist.firehol_attacks_level2.netset
           
           git commit -m "update blocklist" || echo "no changes"
 
-          git push --force origin blocklist
+          git push origin blocklist

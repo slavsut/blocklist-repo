@@ -16,21 +16,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Забираем репозиторий
+      # Клонируем репо
       - name: Checkout
         uses: actions/checkout@v5
         with:
           persist-credentials: false
 
-      # Обновляем пакеты (на всякий)
+      # Обновляем систему (не обязательно, но норм)
       - name: Update system
         run: sudo apt-get update
 
-      # Запускаем твой скрипт
+      # Запускаем скрипт
       - name: Run update script
         run: bash update.sh
 
-      # Коммит и пуш (ВАЖНО: через токен)
+      # Коммит + пуш (через встроенный токен)
       - name: Commit & Push
         run: |
           git config user.name "github-actions"
@@ -39,4 +39,4 @@ jobs:
           git add blocklist.netset
           git commit -m "auto update blocklist" || echo "no changes"
 
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git HEAD:main

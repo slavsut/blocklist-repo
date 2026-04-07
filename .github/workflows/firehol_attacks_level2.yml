@@ -42,16 +42,22 @@ jobs:
       # Пушим только в ветку blocklist
       - name: Push to blocklist branch
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+           git config user.name "github-actions"
+           git config user.email "actions@github.com"
 
-          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
+           # добавляем origin
+           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
 
-          git fetch origin || true
-          git checkout  blocklist || git checkout -b blocklist
+           # получаем ветку
+           git fetch origin blocklist || true
 
-          git add blocklist.firehol_attacks_level2.netset
-          
-          git commit -m "update blocklist" || echo "no changes"
+           # жёстко переключаемся (решает untracked проблему)
+           git checkout -B blocklist origin/blocklist || git checkout -b blocklist
 
-          git push origin blocklist
+           # очищаем всё лишнее 💀
+           git clean -fd
+
+           # кладём файл
+           cp blocklist.firehol_attacks_level2.netset .
+
+           git add blocklist.firehol_attacks_level2.netset

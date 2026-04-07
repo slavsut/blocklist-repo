@@ -16,22 +16,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Клонируем репо
       - name: Checkout
         uses: actions/checkout@v5
         with:
           persist-credentials: false
 
-      # Обновляем систему (опционально)
-      - name: Update system
-        run: sudo apt-get update
-
-      # Запускаем обновление блоклиста
       - name: Run update script
         run: bash update.sh
 
-      # Коммит + pull + push (без конфликтов)
-      - name: Commit & Push
+      - name: Commit & Force Push
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
@@ -39,8 +32,4 @@ jobs:
           git add blocklist.netset
           git commit -m "auto update blocklist" || echo "no changes"
 
-          # подтягиваем изменения если есть
-          git pull --rebase https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git main
-
-          # пушим
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git HEAD:main
+          git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git HEAD:main

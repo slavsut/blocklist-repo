@@ -40,7 +40,7 @@ jobs:
           fi
 
       # Пушим только в ветку blocklist
-      - name: Push to blocklist branch
+      - name: Push to firehol_attacks_level1 branch
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
@@ -59,4 +59,4 @@ jobs:
           git commit -m "update blocklist"
 
           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
-          git push --force origin blocklist
+          git push --force origin firehol_attacks_level1

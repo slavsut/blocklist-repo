@@ -1,8 +1,8 @@
-name: Update Blocklists
+name: Update blocklist.firehol_attacks_level2.netset
 
 on:
   schedule:
-    - cron: '0 3 * * 1'   # раз в неделю (понедельник 03:00)
+    - cron: '0 0 * * 0/3'
   workflow_dispatch:
 
 permissions:
@@ -13,51 +13,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Клонируем репозиторий
+      # Клонируем репозиторий БЕЗ сохранения токена
       - name: Checkout repo
         uses: actions/checkout@v5
         with:
           persist-credentials: false
 
-      # 2️⃣ Подготовка ветки
-      - name: Prepare blocklist branch
+      # Убираем origin чтобы исключить push в main
+      - name: Remove origin
+        run: git remote remove origin
+
+      # Устанавливаем curl
+      - name: Install curl
+        run: sudo apt-get update && sudo apt-get install -y curl
+
+      # Запускаем скрипт обновления
+      - name: Run update script
+        run: bash firehol_attacks_level2.sh
+
+      # Проверяем что файл не пустой
+      - name: Verify file
+        run: |
+          if [ ! -s blocklist.firehol_attacks_level2.netset ]; then
+            echo "ERROR: blocklist is empty"
+            exit 1
+          fi
+
+      # Пушим только в ветку blocklist
+      - name: Push to firehol_attacks_level2 branch
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
-          # подключаем origin с токеном
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
+          rm -rf out
+          mkdir out
+          cp blocklist.firehol_attacks_level1.netset out/
 
-          # получаем ветку (если есть)
-          git fetch origin blocklist || true
+          cd out
+          git init -b firehol_attacks_level2
 
-          # создаём или синхронизируем ветку
-          git checkout -B blocklist origin/blocklist || git checkout -b blocklist
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
 
-          # очищаем мусор
-          git clean -fd
+          git add blocklist.firehol_attacks_level1.netset
+          git commit -m "update blocklist"
 
-      # 3️⃣ Установка зависимостей (если нужно)
-      - name: Install curl
-        run: sudo apt-get update && sudo apt-get install -y curl
-
-      # 4️⃣ Генерация списков
-      - name: Run update script
-        run: bash firehol_attacks_level2.sh
-
-      # 5️⃣ Проверка (не пустой файл)
-      - name: Verify files
-        run: |
-          if [ ! -s blocklist.firehol_attacks_level2.netset ]; then
-            echo "ERROR: file is empty"
-            exit 1
-          fi
-
-      # 6️⃣ Коммит и push
-      - name: Push changes
-        run: |
-          git add *.netset
-          git commit -m "auto update blocklists" || echo "no changes"
-
-          # force нужен для CI (чтобы не было fetch/merge проблем)
-          git push --force origin blocklist
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slavsut/blocklist-repo.git
+          git push --force origin firehol_attacks_level2

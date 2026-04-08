@@ -47,7 +47,7 @@ jobs:
 
           rm -rf out
           mkdir out
-          cp blocklist.firehol_attacks_level1.netset out/
+          cp blocklist.firehol_attacks_level2.netset out/
 
           cd out
           git init -b firehol_attacks_level2

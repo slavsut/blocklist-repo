@@ -50,7 +50,7 @@ jobs:
           cp blocklist.firehol_attacks_level1.netset out/
 
           cd out
-          git init -b blocklist
+          git init -b firehol_attacks_level1
 
           git config user.name "github-actions"
           git config user.email "actions@github.com"
